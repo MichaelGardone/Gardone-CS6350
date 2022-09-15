@@ -1,3 +1,5 @@
+from id3 import id3, gain
+
 LABELS = ["+", "-"]
 
 COLUMNS = ["outlook", "temperature", "humidity", "wind", "play"]
@@ -27,3 +29,12 @@ def read_csv():
             samples.append(sample)
     
     return samples
+
+def main():
+    S = read_csv()
+
+    play_entropy = id3.ID3(S, FEATURES, "play", gain.EntropyGain)
+    
+
+if __name__ == "__main__":
+    main()

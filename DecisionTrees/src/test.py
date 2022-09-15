@@ -93,3 +93,13 @@ print("Information Gain (from information_gain function):", information_gain)
 # for key,val in fl_count.items():
 #     print(key, ":", val)
 
+
+# 
+print("\n\n\n")
+print("==================== SPLIT TEST ====================")
+gains = []
+for a in play.FEATURES.keys():
+    gains.append([gain.information_gain(samples, a, play.FEATURES[a], "play"), a])
+print(gains)
+A = max(gains, key=lambda g:gains[0])[1]
+print(A)

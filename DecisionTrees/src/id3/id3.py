@@ -12,10 +12,13 @@ class Node(object):
         self.branches.append(edge)
 
 class ID3:
-    def __init__(self, label, measure) -> None:
+    def __init__(self, label, gain, max_depth=6) -> None:
         self.label = label
+
         # Entropy, Majority Error, or Gini Index
-        self.measure = measure
+        self.gain = gain
+
+        self.max_depth = max_depth
     
     def get_subset(self, examples, attribute, value) -> list:
         subset = []
@@ -31,7 +34,14 @@ class ID3:
         return subset
     
     def generate_tree(self, examples, attribs) -> Node:
-        pass
+        
+        node = Node()
+
+        # A = attribute in Attributes that best splits S
+        gains = []
+        for a in attribs.keys():
+            gains.append([self.gain(examples, a, attribs[a], self.label), a])
+        A = max(gains, key=lambda g:gains[0])[1]
 
     def predict(self, sample) -> str:
         pass
