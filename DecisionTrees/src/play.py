@@ -4,7 +4,7 @@ LABELS = ["+", "-"]
 
 COLUMNS = ["outlook", "temperature", "humidity", "wind", "play"]
 
-FEATURES = { "outlook":      ['S', 'O', 'R'],
+FEATURES = { "outlook":     ['S', 'O', 'R'],
              "temperature": ['H', 'M', 'C'],
              "humidity":    ['H', 'N', 'L'],
              "wind":        ['S', 'W']
@@ -33,8 +33,38 @@ def read_csv():
 def main():
     S = read_csv()
 
-    play_entropy = id3.ID3(S, FEATURES, "play", gain.EntropyGain)
-    
+    entropy = gain.EntropyGain()
+    majority_error = gain.MajorityError()
+    gini_index = gain.GiniIndex()
+
+    print("=== Entropy ===")
+
+    play_entropy = id3.ID3("play", entropy)
+    play_entropy.generate_tree(S, FEATURES)
+    play_entropy.print_tree(play_entropy.get_root())
+
+    print("\n\n")
+    print("=== Majority Error ===")
+
+    play_me = id3.ID3("play", majority_error)
+    play_me.generate_tree(S, FEATURES)
+    play_me.print_tree(play_entropy.get_root())
+
+    print("\n\n")
+    print("=== Gini Index ===")
+
+    play_me = id3.ID3("play", gini_index)
+    play_me.generate_tree(S, FEATURES)
+    play_me.print_tree(play_entropy.get_root())
+
+    # s1 = { "outlook": "S", "temperature": "C", "humidity": "N", "wind": "W", "play":  "+"}
+    # print(play_entropy.predict(s1) == s1["play"])
+
+    # s1 = { "outlook": "S", "temperature": "C", "humidity": "N", "wind": "W", "play":  "-"}
+    # print(play_entropy.predict(s1) == s1["play"])
+
+    # s1 = { "outlook": "O", "temperature": "C", "humidity": "N", "wind": "W", "play":  "+"}
+    # print(play_entropy.predict(s1) == s1["play"])
 
 if __name__ == "__main__":
     main()
