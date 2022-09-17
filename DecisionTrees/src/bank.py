@@ -6,21 +6,21 @@ LABELS = ["yes", "no"]
 COLUMNS = [ "age", "job", "marital", "education", "default", "balance", "housing", "loan", "contact", "day", "month", "duration", "campaign", "pdays", "previous", "poutcome", "y" ]
 
 FEATURES = {
-    "age":          None,
+    "age":          ["T", "F"],
     "job":          ["admin.","unknown","unemployed","management","housemaid","entrepreneur","student", "blue-collar","self-employed","retired","technician","services"],
     "marital":      ["married","divorced","single"],
     "education":    ["unknown","secondary","primary","tertiary"],
     "default":      ["yes","no"],
-    "balance":      None,
+    "balance":      ["T", "F"],
     "housing":      ["yes","no"],
     "loan":         ["yes","no"],
     "contact":      ["unknown","telephone","cellular"],
-    "day":          None,
-    "month":        ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "nov", "dec"],
-    "duration":     None,
-    "campaign":     None,
-    "pdays":        None,
-    "previous":     None,
+    "day":          ["T", "F"],
+    "month":        ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"],
+    "duration":     ["T", "F"],
+    "campaign":     ["T", "F"],
+    "pdays":        ["T", "F"],
+    "previous":     ["T", "F"],
     "poutcome":     ["unknown","other","failure","success"]
 }
 
@@ -48,7 +48,7 @@ def read_train_csv(replace=False):
     # Convert int/float vals to binary values
     labels = ["T", "F"]
     for f in FEATURES.keys():
-        if FEATURES[f] == None:
+        if FEATURES[f] == ["T", "F"]:
             FEATURES[f] = labels
             numbers = []
             
@@ -102,8 +102,7 @@ def read_test_csv(replace=False):
     # Convert int/float vals to binary values
     labels = ["T", "F"]
     for f in FEATURES.keys():
-        if FEATURES[f] == None:
-            FEATURES[f] = labels
+        if FEATURES[f] == labels:
             numbers = []
             
             for s in samples:
@@ -150,30 +149,24 @@ def main():
 
     for i in range(1, 17):
         bank = id3.ID3("y", entropy, i)
-        bank.generate_tree(train, FEATURES)
+        root = bank.generate_tree(train, FEATURES)
 
-        print("=== LIMITED TO", i, "===")
         # print("\n")
 
         wrong = 0
-
-        print("= Test Dataset Results =")
         for j in range(len(test)):
-            if bank.predict(test[j]) != test[j]["y"]:
+            if bank.predict(root, test[j]) != test[j]["y"]:
                 wrong += 1
         
-        print("Total Wrong:", wrong)
-        print("% Wrong:", (wrong / test_total))
+        print("Test @ Depth", i, ":", wrong, "(", (wrong / test_total),")")
         print()
 
         wrong = 0
-        print("= Training Dataset Results =")
         for j in range(len(train)):
-            if bank.predict(train[j]) != train[j]["y"]:
+            if bank.predict(root, train[j]) != train[j]["y"]:
                 wrong += 1
         
-        print("Total Wrong:", wrong)
-        print("% Wrong:", (wrong / train_total))
+        print("Train @ Depth", i, ":", wrong, "(", (wrong / train_total),")")
         print()
     
     print("===== ENTROPY =====")
@@ -182,30 +175,23 @@ def main():
     
     for i in range(1, 17):
         bank = id3.ID3("y", majority_error, i)
-        bank.generate_tree(train, FEATURES)
-
-        print("=== LIMITED TO", i, "===")
-        # print("\n")
+        root = bank.generate_tree(train, FEATURES)
 
         wrong = 0
 
-        print("= Test Dataset Results =")
         for j in range(len(test)):
-            if bank.predict(test[j]) != test[j]["y"]:
+            if bank.predict(root, test[j]) != test[j]["y"]:
                 wrong += 1
         
-        print("Total Wrong:", wrong)
-        print("% Wrong:", (wrong / test_total))
+        print("Test @ Depth", i, ":", wrong, "(", (wrong / test_total),")")
         print()
 
         wrong = 0
-        print("= Training Dataset Results=")
         for j in range(len(train)):
-            if bank.predict(train[j]) != train[j]["y"]:
+            if bank.predict(root, train[j]) != train[j]["y"]:
                 wrong += 1
         
-        print("Total Wrong:", wrong)
-        print("% Wrong:", (wrong / train_total))
+        print("Train @ Depth", i, ":", wrong, "(", (wrong / train_total),")")
         print()
     
     print("===== MAJORITY ERROR =====")
@@ -214,30 +200,23 @@ def main():
     
     for i in range(1, 17):
         bank = id3.ID3("y", gini_index, i)
-        bank.generate_tree(train, FEATURES)
-
-        print("=== LIMITED TO", i, "===")
-        # print("\n")
+        root = bank.generate_tree(train, FEATURES)
 
         wrong = 0
 
-        print("= Test Dataset Results =")
         for j in range(len(test)):
-            if bank.predict(test[j]) != test[j]["y"]:
+            if bank.predict(root, test[j]) != test[j]["y"]:
                 wrong += 1
         
-        print("Total Wrong:", wrong)
-        print("% Wrong:", (wrong / test_total))
+        print("Test @ Depth", i, ":", wrong, "(", (wrong / test_total),")")
         print()
 
         wrong = 0
-        print("= Training Dataset Results =")
         for j in range(len(train)):
-            if bank.predict(train[j]) != train[j]["y"]:
+            if bank.predict(root, train[j]) != train[j]["y"]:
                 wrong += 1
         
-        print("Total Wrong:", wrong)
-        print("% Wrong:", (wrong / train_total))
+        print("Train @ Depth", i, ":", wrong, "(", (wrong / train_total),")")
         print()
     
     print("===== GINI INDEX =====")
@@ -250,30 +229,21 @@ def main():
 
     for i in range(1, 17):
         bank = id3.ID3("y", entropy, i)
-        bank.generate_tree(train_wo_unk, FEATURES)
-
-        print("=== LIMITED TO", i, "===")
-        # print("\n")
+        root = bank.generate_tree(train_wo_unk, FEATURES)
 
         wrong = 0
-
-        print("= Test Dataset Results =")
         for j in range(len(test_wo_unk)):
-            if bank.predict(test_wo_unk[j]) != test[j]["y"]:
+            if bank.predict(root, test_wo_unk[j]) != test[j]["y"]:
                 wrong += 1
-        
-        print("Total Wrong:", wrong)
-        print("% Wrong:", (wrong / test_total))
+        print("Test @ Depth", i, ":", wrong, "(", (wrong / test_total),")")
         print()
 
         wrong = 0
-        print("= Training Dataset Results =")
         for j in range(len(train_wo_unk)):
-            if bank.predict(train_wo_unk[j]) != train[j]["y"]:
+            if bank.predict(root, train_wo_unk[j]) != train[j]["y"]:
                 wrong += 1
         
-        print("Total Wrong:", wrong)
-        print("% Wrong:", (wrong / train_total))
+        print("Train @ Depth", i, ":", wrong, "(", (wrong / train_total),")")
         print()
     
     print("===== ENTROPY =====")
@@ -282,30 +252,22 @@ def main():
     
     for i in range(1, 17):
         bank = id3.ID3("y", majority_error, i)
-        bank.generate_tree(train_wo_unk, FEATURES)
-
-        print("=== LIMITED TO", i, "===")
-        # print("\n")
+        root = bank.generate_tree(train_wo_unk, FEATURES)
 
         wrong = 0
-
-        print("= Test Dataset Results =")
         for j in range(len(test_wo_unk)):
-            if bank.predict(test_wo_unk[j]) != test[j]["y"]:
+            if bank.predict(root, test_wo_unk[j]) != test[j]["y"]:
                 wrong += 1
         
-        print("Total Wrong:", wrong)
-        print("% Wrong:", (wrong / test_total))
+        print("Test @ Depth", i, ":", wrong, "(", (wrong / test_total),")")
         print()
 
         wrong = 0
-        print("= Training Dataset Results=")
         for j in range(len(train_wo_unk)):
-            if bank.predict(train_wo_unk[j]) != train[j]["y"]:
+            if bank.predict(root, train_wo_unk[j]) != train[j]["y"]:
                 wrong += 1
         
-        print("Total Wrong:", wrong)
-        print("% Wrong:", (wrong / train_total))
+        print("Train @ Depth", i, ":", wrong, "(", (wrong / train_total),")")
         print()
     
     print("===== MAJORITY ERROR =====")
@@ -314,30 +276,22 @@ def main():
     
     for i in range(1, 17):
         bank = id3.ID3("y", gini_index, i)
-        bank.generate_tree(train_wo_unk, FEATURES)
-
-        print("=== LIMITED TO", i, "===")
-        # print("\n")
+        root = bank.generate_tree(train_wo_unk, FEATURES)
 
         wrong = 0
-
-        print("= Test Dataset Results =")
         for j in range(len(test_wo_unk)):
-            if bank.predict(test_wo_unk[j]) != test[j]["y"]:
+            if bank.predict(root, test_wo_unk[j]) != test[j]["y"]:
                 wrong += 1
         
-        print("Total Wrong:", wrong)
-        print("% Wrong:", (wrong / test_total))
+        print("Test @ Depth", i, ":", wrong, "(", (wrong / test_total),")")
         print()
 
         wrong = 0
-        print("= Training Dataset Results =")
         for j in range(len(train_wo_unk)):
-            if bank.predict(train_wo_unk[j]) != train[j]["y"]:
+            if bank.predict(root, train_wo_unk[j]) != train[j]["y"]:
                 wrong += 1
         
-        print("Total Wrong:", wrong)
-        print("% Wrong:", (wrong / train_total))
+        print("Train @ Depth", i, ":", wrong, "(", (wrong / train_total),")")
         print()
     
     print("===== GINI INDEX =====")

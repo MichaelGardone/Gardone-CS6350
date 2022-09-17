@@ -1,3 +1,4 @@
+from cgitb import reset
 from id3 import id3, gain
 
 LABELS = ["unacc", "acc", "good", "vgood"]
@@ -50,6 +51,13 @@ def read_test_csv():
     
     return samples
 
+def print_results(depth, label, right, wrong, percent):
+    output = "At depth " + str(depth) + " for " + label + "\n"
+    output += "\t Total Right:" + str(right) + "\n"
+    output += "\t Total Wrong:" + str(wrong) + "\n"
+    output += "\t % Wrong:" + str(percent)
+    print(output)
+
 def main():
     train = read_train_csv()
     test = read_test_csv()
@@ -61,101 +69,99 @@ def main():
     majority_error = gain.MajorityError()
     gini_index = gain.GiniIndex()
     
-    print("===== ENTROPY =====")
+    # Uncomment to print out a 6-depth tree!
+    # car_entropy = id3.ID3("label", entropy, 6)
+    
+    # eroot = car_entropy.generate_tree(train, FEATURES)
+    # car_entropy.print_tree(eroot)
+    
+    results = {}
 
     for i in range(1, 7):
-        car = id3.ID3("label", entropy, i)
-        car.generate_tree(train, FEATURES)
+        res = { "gi":{ "training":{}, "testing":{} }, "e":{ "training":{}, "testing":{} }, "me":{ "training":{}, "testing":{} } }
 
-        print("=== LIMITED TO", i, "===")
-        # print("\n")
+        car_entropy = id3.ID3("label", entropy, i)
+        e_root = car_entropy.generate_tree(train, FEATURES)
+
+        car_me = id3.ID3("label", majority_error, i)
+        me_root = car_me.generate_tree(train, FEATURES)
+
+        car_gi = id3.ID3("label", gini_index, i)
+        gi_root = car_gi.generate_tree(train, FEATURES)
 
         wrong = 0
-        
-        print("= Test Dataset Results =")
         for j in range(len(test)):
-            if car.predict(test[j]) != test[j]["label"]:
+            if car_entropy.predict(e_root, test[j]) != test[j]["label"]:
                 wrong += 1
-        
-        print("Total Wrong:", wrong)
-        print("% Wrong:", (wrong / test_total))
-        print()
+
+        res["e"]["testing"]["right"] = (test_total - wrong)
+        res["e"]["testing"]["wrong"] = wrong
+        res["e"]["testing"]["perc"] = (wrong / test_total)
 
         wrong = 0
-        print("= Training Dataset Results =")
         for j in range(len(train)):
-            if car.predict(train[j]) != train[j]["label"]:
+            if car_entropy.predict(e_root, train[j]) != train[j]["label"]:
                 wrong += 1
         
-        print("Total Wrong:", wrong)
-        print("% Wrong:", (wrong / train_total))
-        print()
-    
-    print("===== ENTROPY =====")
-    
-    print("===== MAJORITY ERROR =====")
-    
-    for i in range(1, 7):
-        car = id3.ID3("label", majority_error, i)
-        car.generate_tree(train, FEATURES)
-
-        print("=== LIMITED TO", i, "===")
-        # print("\n")
-
+        res["e"]["training"]["right"] = (train_total - wrong)
+        res["e"]["training"]["wrong"] = wrong
+        res["e"]["training"]["perc"] = (wrong / train_total)
+        
         wrong = 0
-
-        print("= Test Dataset Results =")
         for j in range(len(test)):
-            if car.predict(test[j]) != test[j]["label"]:
+            if car_me.predict(me_root, test[j]) != test[j]["label"]:
                 wrong += 1
         
-        print("Total Wrong:", wrong)
-        print("% Wrong:", (wrong / test_total))
-        print()
+        res["me"]["testing"]["right"] = (test_total - wrong)
+        res["me"]["testing"]["wrong"] = wrong
+        res["me"]["testing"]["perc"] = (wrong / test_total)
 
         wrong = 0
-        print("= Training Dataset Results=")
         for j in range(len(train)):
-            if car.predict(train[j]) != train[j]["label"]:
+            if car_me.predict(me_root, train[j]) != train[j]["label"]:
                 wrong += 1
         
-        print("Total Wrong:", wrong)
-        print("% Wrong:", (wrong / train_total))
-        print()
-    
-    print("===== MAJORITY ERROR =====")
-
-    print("===== GINI INDEX =====")
-    
-    for i in range(1, 7):
-        car = id3.ID3("label", gini_index, i)
-        car.generate_tree(train, FEATURES)
-
-        print("=== LIMITED TO", i, "===")
-        # print("\n")
+        res["me"]["training"]["right"] = (train_total - wrong)
+        res["me"]["training"]["wrong"] = wrong
+        res["me"]["training"]["perc"] = (wrong / train_total)
 
         wrong = 0
-
-        print("= Test Dataset Results =")
         for j in range(len(test)):
-            if car.predict(test[j]) != test[j]["label"]:
+            if car_gi.predict(gi_root, test[j]) != test[j]["label"]:
                 wrong += 1
         
-        print("Total Wrong:", wrong)
-        print("% Wrong:", (wrong / test_total))
-        print()
+        res["gi"]["testing"]["right"] = (test_total - wrong)
+        res["gi"]["testing"]["wrong"] = wrong
+        res["gi"]["testing"]["perc"] = (wrong / test_total)
 
         wrong = 0
-        print("= Training Dataset Results =")
         for j in range(len(train)):
-            if car.predict(train[j]) != train[j]["label"]:
+            if car_gi.predict(gi_root, train[j]) != train[j]["label"]:
                 wrong += 1
         
-        print("Total Wrong:", wrong)
-        print("% Wrong:", (wrong / train_total))
-        print()
+        res["gi"]["training"]["right"] = (train_total - wrong)
+        res["gi"]["training"]["wrong"] = wrong
+        res["gi"]["training"]["perc"] = (wrong / train_total)
+        
+        results[i] = res
     
-    print("===== GINI INDEX =====")
+    for m in ["gi", "e", "me"]:
+        if m == "gi":
+            print("==== GINI INDEX ====")
+        elif m == "e":
+            print("==== ENTROPY ====")
+        elif m == "me":
+            print("==== MAJORITY ERROR ====")
+        for i in range(1,7):
+            print_results(i, "training", results[i][m]["training"]["right"], results[i][m]["training"]["wrong"], results[i][m]["training"]["perc"])
+            print_results(i, "testing", results[i][m]["testing"]["right"], results[i][m]["testing"]["wrong"], results[i][m]["testing"]["perc"])
+        if m == "gi":
+            print("==== GINI INDEX ====")
+        elif m == "e":
+            print("==== ENTROPY ====")
+        elif m == "me":
+            print("==== MAJORITY ERROR ====")
+
 
 if __name__ == "__main__":
     main()

@@ -6,23 +6,18 @@ class Node(object):
         # What does this node represent?
         self.label = None
         # Branches are other Node objects
-        self.branches = []
+        self.branches = {}
         # Depth
         self.depth = 0
-        # Leaf status
-        self.is_leaf = False
     
-    def add_branch(self, connection, condition) -> None:
-        self.branches.append([connection, condition])
+    def add_branch(self, to, condition) -> None:
+        self.branches[condition] = to
     
     def set_label(self, label):
         self.label = label
     
-    def get_is_leaf(self) -> bool:
-        return self.is_leaf
-    
-    def set_leaf(self):
-        self.is_leaf = True
+    def is_leaf(self) -> bool:
+        return len(self.branches) == 0
 
 class ID3:
     def __init__(self, label, gain, max_depth=6) -> None:
@@ -36,6 +31,8 @@ class ID3:
 
         # Root node
         self.root = None
+
+        # self.seen = False
     
     def get_subset(self, examples, attribute, value) -> list:
         subset = []
@@ -54,62 +51,54 @@ class ID3:
         node = Node()
         node.depth = depth
 
-        if depth == 1:
-            self.root = node
-
         # if all examples have same label, return label
         if self.are_labels_same(examples):
-            node.set_leaf()
             node.set_label(examples[0][self.label])
             return node
 
         # if attribs is empty or we hit max depth, return a leaf node with the most common label
-        if depth >= self.max_depth or len(attribs) == 0:
-            node.set_leaf()
+        if depth > self.max_depth or len(attribs) == 0:
             node.set_label(self.get_most_common_label(examples))
             return node
 
         # A = attribute in Attributes that best splits S
-        gains = []
+        gains = {}
         for a in attribs.keys():
-            gains.append([self.gain.gain(examples, a, attribs[a], self.label), a])
-        A = max(gains, key=itemgetter(0))[1]
+            gains[a] = self.gain.gain(examples, a, attribs[a], self.label)
+        A = max(gains, key=gains.get)
 
         node.set_label(A)
 
+        # if A == "doors" and self.seen == False:
+        #     print(attribs[A])
+        #     for val in attribs[A]:
+        #         sv = self.get_subset(examples, A, val)
+        #         print(val, len(sv), sv)
+        #     self.seen = True
+
         for val in attribs[A]:
             sv = self.get_subset(examples, A, val)
-            if len(sv) == 0: # 0, because get_subset will return a list of length 0 if nothing fits
+            if len(sv) == 0:
                 child = Node()
-                child.set_leaf()
                 child.set_label(self.get_most_common_label(examples))
                 node.add_branch(child, val)
                 child.depth = depth + 1
-                return node
             else:
-                av = deepcopy(attribs)
-                av.pop(A)
+                av = {}
+                for k,v in attribs.items():
+                    if k != A:
+                        av[k] = v
                 node.add_branch(self.generate_tree(sv, av, depth + 1), val)
         
         return node
 
-    def predict(self, sample) -> str:
-        currNode = self.root
+    def predict(self, node, sample) -> str:
+        if node.is_leaf():
+            return node.label
+        else:
+            # print(node.label, "branching on", sample[node.label])
+            return self.predict(node.branches[sample[node.label]], sample)
 
-        while currNode != None and currNode.get_is_leaf() == False:
-            branch_on = sample[currNode.label]
-            currNode = self._branch_on(currNode, branch_on)
-
-            if currNode == None:
-                break
-
-            if currNode.get_is_leaf():
-                return currNode.label
-
-        if currNode == self.root:
-            return self.root.label
-
-        return None
 
     def are_labels_same(self, examples):
         labels = []
@@ -129,24 +118,19 @@ class ID3:
             count[e[self.label]] += 1
         
         return max(count, key=count.get)
-    
-    def get_root(self) -> Node:
-        return self.root
 
     def print_tree(self, cn):
         print(cn.label)
 
-        for i in range(len(cn.branches)):
-            self._print_tree(cn.branches[i])
+        for cond, node in cn.branches.items():
+            self._print_tree(cond, node)
 
-    def _print_tree(self, cn):
-        node = cn[0]
-        cond = cn[1]
-        out = ("\t" * (node.depth - 1)) + '[on ' + cond +']'+ node.label
+    def _print_tree(self, cond, node):
+        out = ("\t" * node.depth) + '[on ' + cond +']'+ str(node.label) + " (children " + str(len(node.branches)) + ")" 
         print(out)
 
-        for i in range(len(node.branches)):
-            self._print_tree(node.branches[i])
+        for cond, node in node.branches.items():
+            self._print_tree(cond, node)
     
     def _branch_on(self, node, branch_on):
         for e in node.branches:
