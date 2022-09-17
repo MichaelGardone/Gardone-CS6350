@@ -54,10 +54,13 @@ def main():
     train = read_train_csv()
     test = read_test_csv()
 
+    test_total = len(test)
+    train_total = len(train)
+
     entropy = gain.EntropyGain()
     majority_error = gain.MajorityError()
     gini_index = gain.GiniIndex()
-
+    
     print("===== ENTROPY =====")
 
     for i in range(1, 7):
@@ -68,24 +71,24 @@ def main():
         # print("\n")
 
         wrong = 0
-        total = len(test)
-
-        print("= Test Dataset Results=")
+        
+        print("= Test Dataset Results =")
         for j in range(len(test)):
             if car.predict(test[j]) != test[j]["label"]:
                 wrong += 1
         
         print("Total Wrong:", wrong)
-        print("% Wrong:", (wrong / total))
+        print("% Wrong:", (wrong / test_total))
         print()
 
-        print("= Training Dataset Results=")
+        wrong = 0
+        print("= Training Dataset Results =")
         for j in range(len(train)):
             if car.predict(train[j]) != train[j]["label"]:
                 wrong += 1
         
         print("Total Wrong:", wrong)
-        print("% Wrong:", (wrong / total))
+        print("% Wrong:", (wrong / train_total))
         print()
     
     print("===== ENTROPY =====")
@@ -100,24 +103,24 @@ def main():
         # print("\n")
 
         wrong = 0
-        total = len(test)
 
-        print("= Test Dataset Results=")
+        print("= Test Dataset Results =")
         for j in range(len(test)):
             if car.predict(test[j]) != test[j]["label"]:
                 wrong += 1
         
         print("Total Wrong:", wrong)
-        print("% Wrong:", (wrong / total))
+        print("% Wrong:", (wrong / test_total))
         print()
 
+        wrong = 0
         print("= Training Dataset Results=")
         for j in range(len(train)):
             if car.predict(train[j]) != train[j]["label"]:
                 wrong += 1
         
         print("Total Wrong:", wrong)
-        print("% Wrong:", (wrong / total))
+        print("% Wrong:", (wrong / train_total))
         print()
     
     print("===== MAJORITY ERROR =====")
@@ -132,24 +135,24 @@ def main():
         # print("\n")
 
         wrong = 0
-        total = len(test)
 
-        print("= Test Dataset Results=")
+        print("= Test Dataset Results =")
         for j in range(len(test)):
             if car.predict(test[j]) != test[j]["label"]:
                 wrong += 1
         
         print("Total Wrong:", wrong)
-        print("% Wrong:", (wrong / total))
+        print("% Wrong:", (wrong / test_total))
         print()
 
-        print("= Training Dataset Results=")
+        wrong = 0
+        print("= Training Dataset Results =")
         for j in range(len(train)):
             if car.predict(train[j]) != train[j]["label"]:
                 wrong += 1
         
         print("Total Wrong:", wrong)
-        print("% Wrong:", (wrong / total))
+        print("% Wrong:", (wrong / train_total))
         print()
     
     print("===== GINI INDEX =====")
