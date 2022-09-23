@@ -40,22 +40,22 @@ def main():
     print("=== Entropy ===")
 
     play_entropy = id3.ID3("play", entropy)
-    play_entropy.generate_tree(S, FEATURES)
-    play_entropy.print_tree(play_entropy.get_root())
+    re = play_entropy.generate_tree(S, FEATURES)
+    play_entropy.print_tree(re)
 
     print("\n\n")
     print("=== Majority Error ===")
 
     play_me = id3.ID3("play", majority_error)
-    play_me.generate_tree(S, FEATURES)
-    play_me.print_tree(play_entropy.get_root())
+    rme = play_me.generate_tree(S, FEATURES)
+    play_me.print_tree(rme)
 
     print("\n\n")
     print("=== Gini Index ===")
 
-    play_me = id3.ID3("play", gini_index)
-    play_me.generate_tree(S, FEATURES)
-    play_me.print_tree(play_entropy.get_root())
+    play_gi = id3.ID3("play", gini_index)
+    rgi = play_gi.generate_tree(S, FEATURES)
+    play_gi.print_tree(rgi)
 
     # s1 = { "outlook": "S", "temperature": "C", "humidity": "N", "wind": "W", "play":  "+"}
     # print(play_entropy.predict(s1) == s1["play"])
