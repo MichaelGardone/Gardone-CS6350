@@ -19,7 +19,14 @@ To run part 2 of the second part of the homework (bank dataset), cd to this dire
 python src/bank.py
 ```
 
-If you'd like to not flood your console with messages, also add the '> output.txt' piping. You can also run the test dataset (play, from the class slides) to see what is produced to verify the tree being made is correct in all three heuristics. A Python rounding error occurs in Majority Error that causes Humidity to be selected over Outlook (0.xyzw5 vs 0.xyzw4, respectively)
+If you'd like to not flood your console with messages, also add the '> output.txt' piping. You can also run the test dataset (play, from the class slides) to see what is produced to verify the tree being made is correct in all three heuristics. A Python rounding error occurs in Majority Error that causes Humidity to be selected over Outlook (0.xyzw5 vs 0.xyzw4, respectively).
+
+To run both at once, please follow:
+
+```
+cd src
+./run.sh
+```
 
 ## ???? - Homework 2
 
