@@ -17,3 +17,10 @@ python src/bank.py
 ```
 
 If you'd like to not flood your console with messages, also add the '> output.txt' piping. You can also run the test dataset (play, from the class slides) to see what is produced to verify the tree being made is correct in all three heuristics.
+
+To run both at once, please follow:
+
+```
+cd src
+./run.sh
+```
