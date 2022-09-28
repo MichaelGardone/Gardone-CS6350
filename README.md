@@ -24,7 +24,7 @@ If you'd like to not flood your console with messages, also add the '> output.tx
 To run both at once, please follow:
 
 ```
-cd src
+cd DecisionTrees/src
 ./run.sh
 ```
 
