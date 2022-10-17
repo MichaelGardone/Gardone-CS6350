@@ -33,8 +33,8 @@ FEATURES = {
     "poutcome":     ["unknown","other","failure","success"]
 }
 
-T = 100
-DEBUG = True
+T = 500
+DEBUG = False
 
 # making paths more resiliant so I don't have to scramble like in HW1
 # bank_train = "../data/bank-2/train-subset.csv" if os.path.isfile("../data/bank-2/train-subset.csv") else "data/bank-2/train-subset.csv"
@@ -81,8 +81,8 @@ def main():
 
     actual_labels = tr["y"].tolist()
 
-    # te = parse_test()
-    # testing_length = len(te)
+    te = parse_test()
+    testing_length = len(te)
     
     print("Begin entropy testing...")
     entropy = gain.EntropyGain()
@@ -90,17 +90,25 @@ def main():
     sroot = gen.generate_stump(tr, FEATURES)
     troot = gen.generate_tree(tr, FEATURES)
     
-    wrong = 0
+    str_wrong = 0
+    ttr_wrong = 0
     for i in range(training_length):
         if tr["y"][i] != sroot.predict(tr.iloc[i]):
-            wrong += 1
-    print("\t[Stump] Total Wrong:", (wrong), "/", (training_length), "(", (wrong / training_length * 100), "% )")
-
-    wrong = 0
-    for i in range(training_length):
+            str_wrong += 1
         if tr["y"][i] != troot.predict(tr.iloc[i]):
-            wrong += 1
-    print("\t[Tree] Total Wrong:", (wrong), "/", (training_length), "(", (wrong / training_length * 100), "% )")
+            ttr_wrong += 1
+    print("\t[Stump | Training] Total Wrong:", (str_wrong), "/", (training_length), "(", (str_wrong / training_length * 100), "% )")
+    print("\t[Tree  | Training] Total Wrong:", (ttr_wrong), "/", (training_length), "(", (ttr_wrong / training_length * 100), "% )")
+
+    ste_wrong = 0
+    tte_wrong = 0
+    for i in range(testing_length):
+        if te["y"][i] != sroot.predict(tr.iloc[i]):
+            ste_wrong += 1
+        if te["y"][i] != troot.predict(tr.iloc[i]):
+            tte_wrong += 1
+    print("\t[Stump | Testing] Total Wrong:", (ste_wrong), "/", (testing_length), "(", (ste_wrong / testing_length * 100), "% )")
+    print("\t[Tree  | Testing] Total Wrong:", (tte_wrong), "/", (testing_length), "(", (tte_wrong / testing_length * 100), "% )")
     print("End entropy testing...")
 
     print("Begin ME testing...")
@@ -109,17 +117,25 @@ def main():
     sroot = gen.generate_stump(tr, FEATURES)
     troot = gen.generate_tree(tr, FEATURES)
 
-    wrong = 0
+    str_wrong = 0
+    ttr_wrong = 0
     for i in range(training_length):
         if tr["y"][i] != sroot.predict(tr.iloc[i]):
-            wrong += 1
-    print("\t[Stump] Total Wrong:", (wrong), "/", (training_length), "(", (wrong / training_length * 100), "% )")
-
-    wrong = 0
-    for i in range(training_length):
+            str_wrong += 1
         if tr["y"][i] != troot.predict(tr.iloc[i]):
-            wrong += 1
-    print("\t[Tree] Total Wrong:", (wrong), "/", (training_length), "(", (wrong / training_length * 100), "% )")
+            ttr_wrong += 1
+    print("\t[Stump | Training] Total Wrong:", (str_wrong), "/", (training_length), "(", (str_wrong / training_length * 100), "% )")
+    print("\t[Tree  | Training] Total Wrong:", (ttr_wrong), "/", (training_length), "(", (ttr_wrong / training_length * 100), "% )")
+
+    ste_wrong = 0
+    tte_wrong = 0
+    for i in range(testing_length):
+        if te["y"][i] != sroot.predict(tr.iloc[i]):
+            ste_wrong += 1
+        if te["y"][i] != troot.predict(tr.iloc[i]):
+            tte_wrong += 1
+    print("\t[Stump | Testing] Total Wrong:", (ste_wrong), "/", (testing_length), "(", (ste_wrong / testing_length * 100), "% )")
+    print("\t[Tree  | Testing] Total Wrong:", (tte_wrong), "/", (testing_length), "(", (tte_wrong / testing_length * 100), "% )")
     print("End ME testing...")
 
     print("Begin GI testing...")
@@ -128,17 +144,25 @@ def main():
     sroot = gen.generate_stump(tr, FEATURES)
     troot = gen.generate_tree(tr, FEATURES)
     
-    wrong = 0
+    str_wrong = 0
+    ttr_wrong = 0
     for i in range(training_length):
         if tr["y"][i] != sroot.predict(tr.iloc[i]):
-            wrong += 1
-    print("\t[Stump] Total Wrong:", (wrong), "/", (training_length), "(", (wrong / training_length * 100), "% )")
-
-    wrong = 0
-    for i in range(training_length):
+            str_wrong += 1
         if tr["y"][i] != troot.predict(tr.iloc[i]):
-            wrong += 1
-    print("\t[Tree] Total Wrong:", (wrong), "/", (training_length), "(", (wrong / training_length * 100), "% )")
+            ttr_wrong += 1
+    print("\t[Stump | Training] Total Wrong:", (str_wrong), "/", (training_length), "(", (str_wrong / training_length * 100), "% )")
+    print("\t[Tree  | Training] Total Wrong:", (ttr_wrong), "/", (training_length), "(", (ttr_wrong / training_length * 100), "% )")
+
+    ste_wrong = 0
+    tte_wrong = 0
+    for i in range(testing_length):
+        if te["y"][i] != sroot.predict(tr.iloc[i]):
+            ste_wrong += 1
+        if te["y"][i] != troot.predict(tr.iloc[i]):
+            tte_wrong += 1
+    print("\t[Stump | Testing] Total Wrong:", (ste_wrong), "/", (testing_length), "(", (ste_wrong / testing_length * 100), "% )")
+    print("\t[Tree  | Testing] Total Wrong:", (tte_wrong), "/", (testing_length), "(", (tte_wrong / testing_length * 100), "% )")
     print("End GI testing...")
 
 ######

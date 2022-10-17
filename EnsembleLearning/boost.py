@@ -32,15 +32,15 @@ FEATURES = {
     "poutcome":     ["unknown","other","failure","success"]
 }
 
-T = 10
-DEBUG = True
+T = 500
+DEBUG = False
 
 # making paths more resiliant so I don't have to scramble like in HW1
 # bank_train = "../data/bank-2/train-subset.csv" if os.path.isfile("../data/bank-2/train-subset.csv") else "data/bank-2/train-subset.csv"
 bank_train = "../data/bank-2/train.csv" if os.path.isfile("../data/bank-2/train.csv") else "data/bank-2/train.csv"
 bank_test = "../data/bank-2/test.csv" if os.path.isfile("../data/bank-2/test.csv") else "data/bank-2/test.csv"
 
-save = "output/results/" if os.path.isfile("../data/bank-2/test.csv") else "EnsembleLearning/output/results"
+save = "output/results/" if os.path.isfile("../data/bank-2/test.csv") else "EnsembleLearning/output/results/"
 
 def parse_train():
     global ATTRIBUTES, TYPES
@@ -129,6 +129,7 @@ def main():
     
     # for t = 1, 2, ..., T
     for t in range(T):
+        print("\t===")
         # Train
         boost_model.single_boost(tr, FEATURES, actual_labels)
 
@@ -155,14 +156,14 @@ def main():
             if te["y"][i] != boost_model.test_hypothesis_at(tr.iloc[i]):
                 ste_wrong += 1
 
-        print("\t[", t, "] TESTING: Overall Total Wrong:", (otr_wrong), "/", (training_length), "(", ((ote_wrong / testing_length) * 100), "% )")
+        print("\t[", t, "] TESTING: Overall Total Wrong:", (ote_wrong), "/", (training_length), "(", ((ote_wrong / testing_length) * 100), "% )")
         print("\t[", t, "] TESTING: Stump Total Wrong:", (ste_wrong), "/", (training_length), "(", (ste_wrong / testing_length) * 100, "% )")
 
         slice = [t, otr_wrong, (otr_wrong / training_length) * 100, ote_wrong, (ote_wrong / training_length) * 100]
         res_df = pandas.DataFrame(data=[slice], columns=["T", "Training Error", "Training Error %", "Testing Error", "Testing Error %"])
         overall = pandas.concat([overall, res_df])
 
-        slice = [t, ote_wrong, (str_wrong / testing_length) * 100, ste_wrong, (ste_wrong / testing_length) * 100]
+        slice = [t, str_wrong, (str_wrong / testing_length) * 100, ste_wrong, (ste_wrong / testing_length) * 100]
         res_df = pandas.DataFrame(data=[slice], columns=["T", "Training Error", "Training Error %", "Testing Error", "Testing Error %"])
         stump_results = pandas.concat([stump_results, res_df])
         ####
@@ -170,8 +171,8 @@ def main():
     print("=== Finished boost tests! ===")
 
     ### DONE! Dump to csv
-    overall.to_csv(save + "/boost/overall_performance")
-    # stump_results.to_csv(save + "stump_performance")
+    overall.to_csv(save + "boost/overall_performance.csv")
+    stump_results.to_csv(save + "boost/stump_performance.csv")
 
     return 0
 

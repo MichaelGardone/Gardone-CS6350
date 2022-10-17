@@ -31,9 +31,11 @@ FEATURES = {
     "poutcome":     ["unknown","other","failure","success"]
 }
 
-T = 100
+T = 10
 M = 0.5 # M is a % of all samples
 DEBUG = True
+
+save = "output/results/" if os.path.isfile("../data/bank-2/test.csv") else "EnsembleLearning/output/results/"
 
 # making paths more resiliant so I don't have to scramble like in HW1
 # bank_train = "../data/bank-2/train-subset.csv" if os.path.isfile("../data/bank-2/train-subset.csv") else "data/bank-2/train-subset.csv"
@@ -72,6 +74,8 @@ def parse_test():
 def main():
     global FEATURES, T, DEBUG, M
 
+    print("=== Beginning bagging tests! ===")
+
     tr = parse_train()
     training_length = len(tr.index)
     sample_count = int(M * training_length) # Subcount
@@ -79,11 +83,13 @@ def main():
     # add the weight column to the end of the training data
     tr["weight"] = 1 # in bagging, it doesn't matter the weight, but it needs to be uniform
 
-    # te = parse_test()
-    # testing_length = len(te)
+    te = parse_test()
+    testing_length = len(te.index)
 
     # label, sample_count, gain=gain.EntropyGain()
     bagging_model = Bagging.Bagging("y", sample_count, debug=DEBUG)
+
+    overall = pandas.DataFrame(columns=["T", "Training Error", "Training Error %", "Testing Error", "Testing Error %"])
 
     # print("iter 1")
     # bagging_model.single_bag(tr, FEATURES)
@@ -110,18 +116,33 @@ def main():
     
     # for t = 1, 2, ..., T
     for t in range(T):
+        print("\t===")
         # Train
         bagging_model.single_bag(tr, FEATURES)
 
         # Evaluate on train
-        wrong = 0
+        tr_wrong = 0
         for i in range(training_length):
             if tr["y"][i] != bagging_model.classify(tr.iloc[i]):
-                wrong += 1
-        print("[", t, "] Total Wrong:", (wrong), "/", (training_length), "(", (wrong / training_length * 100), "% )")
+                tr_wrong += 1
+        print("\t[", t, "] TRAINING: Total Wrong:", (tr_wrong), "/", (training_length), "(", (tr_wrong / training_length * 100), "% )")
 
         # Evaluate on test
+        te_wrong = 0
+        for i in range(testing_length):
+            if tr["y"][i] != bagging_model.classify(tr.iloc[i]):
+                te_wrong += 1
+        print("\t[", t, "] TESTING: Total Wrong:", (te_wrong), "/", (testing_length), "(", (te_wrong / testing_length * 100), "% )")
+
+        slice = [t, tr_wrong, (tr_wrong / training_length) * 100, te_wrong, (te_wrong / testing_length) * 100]
+        res_df = pandas.DataFrame(data=[slice], columns=["T", "Training Error", "Training Error %", "Testing Error", "Testing Error %"])
+        overall = pandas.concat([overall, res_df])
         ####
+
+    print("=== Finished bagging tests! ===")
+    
+    ### DONE! Dump to csv
+    overall.to_csv(save + "bagging/overall_performance.csv")
 
     return 0
 
