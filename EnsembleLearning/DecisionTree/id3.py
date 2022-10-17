@@ -62,7 +62,7 @@ class EID3:
 
         # if all examples have same label, return label
         if self.are_labels_same(examples):
-            node.set_label(examples[self.label][0])
+            node.set_label(examples[self.label].tolist()[0])
             return node
 
         # if attribs is empty, return a leaf node with the most common label
@@ -79,7 +79,7 @@ class EID3:
         node.set_label(A)
 
         for val in attribs[A]:
-            sv = self.get_subset(examples, A, val)
+            sv = self.get_subset(examples, A, attribs, val)
             if len(sv) == 0:
                 child = Node()
                 child.set_label(self.get_most_common_label(examples))
@@ -90,6 +90,7 @@ class EID3:
                 for k,v in attribs.items():
                     if k != A:
                         av[k] = v
+                
                 node.add_branch(self.generate_tree(sv, av, depth + 1), val)
         
         return node
@@ -120,10 +121,11 @@ class EID3:
 
     def are_labels_same(self, examples):
         labels = []
+        labels_from_examples = examples[self.label].tolist()
 
-        for e in examples:
-            if e[self.label] not in labels:
-                labels.append(e[self.label])
+        for e in labels_from_examples:
+            if e not in labels:
+                labels.append(e)
         
         return len(labels) == 1
     

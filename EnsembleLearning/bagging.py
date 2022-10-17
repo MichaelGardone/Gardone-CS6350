@@ -6,8 +6,7 @@ import os
 import pandas, numpy
 
 # my code
-from DecisionTree import id3, gain
-from AdaBoost import AdaBoost
+from Bagging import Bagging
 
 # Columns
 ATTRIBUTES = [ "age", "job", "marital", "education", "default", "balance", "housing", "loan", "contact", "day", "month", "duration", "campaign", "pdays", "previous", "poutcome", "y" ]
@@ -33,6 +32,7 @@ FEATURES = {
 }
 
 T = 100
+M = 0.5 # M is a % of all samples
 DEBUG = True
 
 # making paths more resiliant so I don't have to scramble like in HW1
@@ -70,104 +70,58 @@ def parse_test():
     return testing
 
 def main():
-    global FEATURES, T, DEBUG
+    global FEATURES, T, DEBUG, M
 
     tr = parse_train()
     training_length = len(tr.index)
+    sample_count = int(M * training_length) # Subcount
     
-    # add the weight column to the end
-    tr["weight"] = 1 / training_length
+    # add the weight column to the end of the training data
+    tr["weight"] = 1 # in bagging, it doesn't matter the weight, but it needs to be uniform
 
     # te = parse_test()
     # testing_length = len(te)
-    
-    # === ID3 check to make sure things work with pandas ===
-    # entropy = gain.EntropyGain()
-    # stump = id3.EID3("y", entropy)
-    # root = stump.generate_stump(tr, FEATURES)
-    # root.print_tree()
-    
-    # wrong = 0
-    # for i in range(training_length):
-    #     if tr["y"][i] != root.predict(tr.iloc[i]):
-    #         wrong += 1
-    # print("Total Wrong:", (wrong), "/", (training_length), "(", (wrong / training_length * 100), "% )")
-
-    # me = gain.MajorityError()
-    # stump = id3.EID3("y", me)
-    # root = stump.generate_stump(tr, FEATURES)
-    # stump.print_tree(root)
-
-    # gi = gain.MajorityError()
-    # stump = id3.EID3("y", gi)
-    # root = stump.generate_stump(tr, FEATURES)
-    # stump.print_tree(root)
-    # === ID3 check to make sure things work with pandas ===
 
     # label, sample_count, gain=gain.EntropyGain()
-    boost_model = AdaBoost.AdaBoostStump("y", training_length, debug=DEBUG)
-
-    actual_labels = tr["y"].tolist()
-
-    # original
-    # print(tr)
+    bagging_model = Bagging.Bagging("y", sample_count, debug=DEBUG)
 
     # print("iter 1")
-    # boost_model.single_boost(tr, FEATURES, actual_labels)
+    # bagging_model.single_bag(tr, FEATURES)
 
     # wrong = 0
     # for i in range(training_length):
-    #     if tr["y"][i] != boost_model.classify(tr.iloc[i]):
+    #     if tr["y"][i] != bagging_model.classify(tr.iloc[i]):
     #         wrong += 1
     # print("Total Wrong:", (wrong), "/", (training_length), "(", (wrong / training_length * 100), "% )")
-    # print("Sum Check:", sum(boost_model._prevD[0]))
-    # print("Error: ", boost_model._errors[0])
 
-    # # after iteration 1
-    # print(tr)
-
-    # boost_model.print_hypotheses()
+    # bagging_model.print_hypotheses()
 
     # print()
 
     # print("iter 2")
-    # boost_model.single_boost(tr, FEATURES, actual_labels)
+    # bagging_model.single_bag(tr, FEATURES)
     # wrong = 0
     # for i in range(training_length):
-    #     if tr["y"][i] != boost_model.classify(tr.iloc[i]):
+    #     if tr["y"][i] != bagging_model.classify(tr.iloc[i]):
     #         wrong += 1
     # print("Total Wrong:", (wrong), "/", (training_length), "(", (wrong / training_length * 100), "% )")
-    # print("Sum Check:", sum(boost_model._prevD[1]))
-    # print("Error: ", boost_model._errors[1])
-    
-    # # after iteration 2
-    # print(tr)
 
-    # boost_model.print_hypotheses()
+    # bagging_model.print_hypotheses()
     
     # for t = 1, 2, ..., T
     for t in range(T):
         # Train
-        boost_model.single_boost(tr, FEATURES, actual_labels)
+        bagging_model.single_bag(tr, FEATURES)
 
         # Evaluate on train
         wrong = 0
         for i in range(training_length):
-            if tr["y"][i] != boost_model.classify(tr.iloc[i]):
+            if tr["y"][i] != bagging_model.classify(tr.iloc[i]):
                 wrong += 1
         print("[", t, "] Total Wrong:", (wrong), "/", (training_length), "(", (wrong / training_length * 100), "% )")
-        print("\tSum Check:", sum(boost_model._prevD[t]))
-        print("\tError: ", boost_model._errors[t])
 
         # Evaluate on test
         ####
-    
-    # for t in range(T):
-    #     print("===")
-    #     print("iter", t)
-    #     print("Sum Check:", sum(boost_model._prevD[t]))
-    #     print("Error: ", boost_model._errors[t])
-    #     print("Distrib: ", boost_model._prevD[t])
 
     return 0
 

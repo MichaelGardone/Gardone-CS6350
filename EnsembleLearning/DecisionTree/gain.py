@@ -88,9 +88,11 @@ class EntropyGain(InformationGain):
         return expected_entropy
 
 class MajorityError(InformationGain):
-    def gain(self, samples, feature, feature_values, label, weights):
+    def gain(self, samples, feature, feature_values, label):
         # Total Entropy
         ssv = samples[label].tolist()
+        weights = samples["weight"].tolist()
+
         le = self.label_measure(ssv, weights)
 
         # Expected Entropy
@@ -139,9 +141,11 @@ class MajorityError(InformationGain):
         return expected_entropy
 
 class GiniIndex(InformationGain):
-    def gain(self, samples, feature, feature_values, label, weights):
+    def gain(self, samples, feature, feature_values, label):
         # Total Entropy
         ssv = samples[label].tolist()
+        weights = samples["weight"].tolist()
+
         le = self.label_measure(ssv, weights)
 
         # Expected Entropy

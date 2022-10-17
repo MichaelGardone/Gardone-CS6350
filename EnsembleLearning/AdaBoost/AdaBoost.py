@@ -1,7 +1,7 @@
 from DecisionTree import id3, gain
 import numpy, copy
 
-class AdaBoostStump:
+class AdaBoost:
     def __init__(self, label, sample_count, gain=gain.EntropyGain(), debug=False) -> None:
         self._label = label
         self._gain = gain
@@ -107,6 +107,9 @@ class AdaBoostStump:
             wsum += alpha * int(h.predict(inst))
         
         return numpy.sign(wsum)
+    
+    def test_hypothesis_at(self, data, index=0):
+        return int(self._hypotheses[index][0].predict(data))
     
     def verbose_classify(self, inst):
         wsum = 0
