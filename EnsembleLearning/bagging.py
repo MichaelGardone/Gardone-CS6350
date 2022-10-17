@@ -31,9 +31,9 @@ FEATURES = {
     "poutcome":     ["unknown","other","failure","success"]
 }
 
-T = 10
+T = 500
 M = 0.5 # M is a % of all samples
-DEBUG = True
+DEBUG = False
 
 save = "output/results/" if os.path.isfile("../data/bank-2/test.csv") else "EnsembleLearning/output/results/"
 
@@ -130,7 +130,7 @@ def main():
         # Evaluate on test
         te_wrong = 0
         for i in range(testing_length):
-            if tr["y"][i] != bagging_model.classify(tr.iloc[i]):
+            if te["y"][i] != bagging_model.classify(tr.iloc[i]):
                 te_wrong += 1
         print("\t[", t, "] TESTING: Total Wrong:", (te_wrong), "/", (testing_length), "(", (te_wrong / testing_length * 100), "% )")
 

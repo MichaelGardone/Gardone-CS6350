@@ -1,3 +1,5 @@
+import random
+
 class Node(object):
     def __init__(self) -> None:
         # What does this node represent?
@@ -56,6 +58,60 @@ class EID3:
 
         return examples.loc[examples[attribute] == value, all_but_self]
     
+    def generate_tree_with_subset(self, examples, attribs, attrib_count = 1, depth = 0) -> Node:
+        node = Node()
+        node.depth = depth
+
+        # if all examples have same label, return label
+        if self.are_labels_same(examples):
+            node.set_label(examples[self.label].tolist()[0])
+            return node
+
+        # if attribs is empty, return a leaf node with the most common label
+        if len(attribs) == 0:
+            node.set_label(self.get_most_common_label(examples))
+            return node
+        
+        # Get G from A
+
+        # if # of attribs requested is greater than what is available, just take the available amount
+        act_attrib_count = attrib_count
+        if attrib_count > len(attribs):
+            act_attrib_count = len(attribs)
+
+        sub_attribs = {}
+        a = list(attribs)
+        while len(sub_attribs) < act_attrib_count:
+            choice = random.choice(a)
+            if choice not in sub_attribs:
+                sub_attribs[choice] = attribs[choice]
+
+        # A = attribute in Attributes that best splits S
+        gains = {}
+        for a in sub_attribs.keys():
+            gains[a] = self.gain.gain(examples, a, sub_attribs[a], self.label)
+        A = max(gains, key=gains.get)
+
+        node.set_label(A)
+
+        for val in attribs[A]:
+            sv = self.get_subset(examples, A, attribs, val)
+            if len(sv) == 0:
+                child = Node()
+                child.set_label(self.get_most_common_label(examples))
+                node.add_branch(child, val)
+                child.depth = depth + 1
+            else:
+                av = {}
+                for k,v in attribs.items():
+                    if k != A:
+                        av[k] = v
+                
+                if len(av) > 0:
+                    node.add_branch(self.generate_tree(sv, av, depth + 1), val)
+        
+        return node
+
     def generate_tree(self, examples, attribs, depth = 0) -> Node:
         node = Node()
         node.depth = depth

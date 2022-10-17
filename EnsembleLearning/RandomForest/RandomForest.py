@@ -28,17 +28,9 @@ class RandomForest:
         # Get X number of rows, determined before entering tree creation
         sub_samples = examples.sample(n=self._sample_count)
         
-        # Get G from A
-        sub_attribs = {}
-        a = list(attributes)
-        while len(sub_attribs) < self._attrib_count:
-            choice = random.choice(a)
-            if choice not in sub_attribs:
-                sub_attribs[choice] = attributes[choice]
-
         # Find a classifier h_t whose weighted classification error is better than chance
         # >>> Just get the label with the best gain
-        root = id3.EID3(self._label, self._gain).generate_tree(sub_samples, sub_attribs)
+        root = id3.EID3(self._label, self._gain).generate_tree_with_subset(sub_samples, attributes, self._attrib_count)
         
         # add it to the hypotheses list along with its weight (vote)
         self._hypotheses.append(root)

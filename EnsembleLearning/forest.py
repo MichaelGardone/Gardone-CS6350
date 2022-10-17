@@ -31,7 +31,7 @@ FEATURES = {
     "poutcome":     ["unknown","other","failure","success"]
 }
 
-T = 10
+T = 500
 M = 0.5 # M is a % of all samples
 DEBUG = False
 
