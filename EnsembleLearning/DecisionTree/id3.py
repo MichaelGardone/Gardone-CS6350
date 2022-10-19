@@ -58,7 +58,7 @@ class EID3:
 
         return examples.loc[examples[attribute] == value, all_but_self]
     
-    def generate_tree_with_subset(self, examples, attribs, attrib_count = 1, depth = 0) -> Node:
+    def generate_tree_with_subset(self, examples, attribs, attrib_count = 2, depth = 0) -> Node:
         node = Node()
         node.depth = depth
 

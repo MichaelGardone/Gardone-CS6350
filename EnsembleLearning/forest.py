@@ -80,7 +80,7 @@ def main():
     sample_count = int(M * training_length) # Subcount
     
     # add the weight column to the end of the training data
-    tr["weight"] = 1 # in bagging, it doesn't matter the weight, but it needs to be uniform
+    tr["weight"] = 1 # in forest, it doesn't matter the weight, but it needs to be uniform
 
     te = parse_test()
     testing_length = len(te.index)
@@ -92,9 +92,28 @@ def main():
     #             g[choice] = FEATURES[choice]
     # print(g)
 
-    overall = pandas.DataFrame(columns=["T", "2 Training Error", "2 Training Error %", "2 Testing Error", "2 Testing Error %",
-                                             "4 Training Error", "4 Training Error %", "4 Testing Error", "4 Testing Error %",
-                                             "6 Training Error", "6 Training Error %", "6 Testing Error", "6 Testing Error %" ])
+    # overall = pandas.DataFrame(columns=["T", "2 Training Error", "2 Training Error %", "2 Testing Error", "2 Testing Error %",
+    #                                          "4 Training Error", "4 Training Error %", "4 Testing Error", "4 Testing Error %",
+    #                                          "6 Training Error", "6 Training Error %", "6 Testing Error", "6 Testing Error %" ])
+    steps = [i for i in range(T)]
+
+    rf2_train_error_perc = []
+    rf2_train_error_total = []
+    rf2_test_error_perc = []
+    rf2_test_error_total = []
+
+    rf4_train_error_perc = []
+    rf4_train_error_total = []
+    rf4_test_error_perc = []
+    rf4_test_error_total = []
+
+    rf6_train_error_perc = []
+    rf6_train_error_total = []
+    rf6_test_error_perc = []
+    rf6_test_error_total = []
+
+    # columns=["T", "Training Error", "Training Error %", "Testing Error", "Testing Error %"]
+    overall = pandas.DataFrame({"T":steps})
 
     rf2_model = RandomForest.RandomForest("y", sample_count, 2, debug=DEBUG)
     rf4_model = RandomForest.RandomForest("y", sample_count, 4, debug=DEBUG)
@@ -165,39 +184,59 @@ def main():
                 tr_rf6_wrong += 1
             
         print("\t[", t, "| 2 Features ] TRAINING: Total Wrong:", (tr_rf2_wrong), "/", (training_length), "(", (tr_rf2_wrong / training_length * 100), "% )")
+        rf2_train_error_perc.append(tr_rf2_wrong / training_length * 100)
+        rf2_train_error_total.append(tr_rf2_wrong)
         print("\t[", t, "| 4 Features ] TRAINING: Total Wrong:", (tr_rf4_wrong), "/", (training_length), "(", (tr_rf4_wrong / training_length * 100), "% )")
+        rf4_train_error_perc.append(tr_rf4_wrong / training_length * 100)
+        rf4_train_error_total.append(tr_rf4_wrong)
         print("\t[", t, "| 6 Features ] TRAINING: Total Wrong:", (tr_rf6_wrong), "/", (training_length), "(", (tr_rf6_wrong / training_length * 100), "% )")
+        rf6_train_error_perc.append(tr_rf6_wrong / training_length * 100)
+        rf6_train_error_total.append(tr_rf6_wrong)
 
         # Evaluate on test
         te_rf2_wrong = 0
         te_rf4_wrong = 0
         te_rf6_wrong = 0
         for i in range(testing_length):
-            if te["y"][i] != rf2_model.classify(tr.iloc[i]):
+            if te["y"][i] != rf2_model.classify(te.iloc[i]):
                 te_rf2_wrong += 1
-            if te["y"][i] != rf4_model.classify(tr.iloc[i]):
+            if te["y"][i] != rf4_model.classify(te.iloc[i]):
                 te_rf4_wrong += 1
-            if te["y"][i] != rf6_model.classify(tr.iloc[i]):
+            if te["y"][i] != rf6_model.classify(te.iloc[i]):
                 te_rf6_wrong += 1
         
         print("\t[", t, "| 2 Features ] TESTING: Total Wrong:", (te_rf2_wrong), "/", (testing_length), "(", (te_rf2_wrong / testing_length * 100), "% )")
+        rf2_test_error_perc.append(te_rf2_wrong / testing_length * 100)
+        rf2_test_error_total.append(te_rf2_wrong)
         print("\t[", t, "| 4 Features ] TESTING: Total Wrong:", (te_rf4_wrong), "/", (testing_length), "(", (te_rf4_wrong / testing_length * 100), "% )")
+        rf4_test_error_perc.append(te_rf4_wrong / testing_length * 100)
+        rf4_test_error_total.append(te_rf4_wrong)
         print("\t[", t, "| 6 Features ] TESTING: Total Wrong:", (te_rf6_wrong), "/", (testing_length), "(", (te_rf6_wrong / testing_length * 100), "% )")
-
-        slice = [t, tr_rf2_wrong, (tr_rf2_wrong / training_length * 100), te_rf2_wrong, (te_rf2_wrong / testing_length) * 100,
-                    tr_rf4_wrong, (tr_rf4_wrong / training_length * 100), te_rf4_wrong, (te_rf4_wrong / testing_length) * 100,
-                    tr_rf6_wrong, (tr_rf6_wrong / training_length * 100), te_rf6_wrong, (te_rf6_wrong / testing_length) * 100]
-        res_df = pandas.DataFrame(data=[slice], columns=["T",
-                                             "2 Training Error", "2 Training Error %", "2 Testing Error", "2 Testing Error %",
-                                             "4 Training Error", "4 Training Error %", "4 Testing Error", "4 Testing Error %",
-                                             "6 Training Error", "6 Training Error %", "6 Testing Error", "6 Testing Error %" ])
-        overall = pandas.concat([overall, res_df])
+        rf6_test_error_perc.append(te_rf6_wrong / testing_length * 100)
+        rf6_test_error_total.append(te_rf6_wrong)
         ####
-    print("=== Finished random forest tests! ===")
     
+    # columns=["T", "2 Training Error", "2 Training Error %", "2 Testing Error", "2 Testing Error", "4 Training Error", "4 Training Error %", "4 Testing Error", "4 Testing Error %",
+    #               "6 Training Error", "6 Training Error %", "6 Testing Error", "6 Testing Error %" ]
+    overall["2 Training Error"] = rf2_train_error_total
+    overall["2 Training Error %"] = rf2_train_error_perc
+    overall["2 Testing Error"] = rf2_test_error_total
+    overall["2 Testing Error %"] = rf2_test_error_perc
+
+    overall["4 Training Error"] = rf4_train_error_total
+    overall["4 Training Error %"] = rf4_train_error_perc
+    overall["4 Testing Error"] = rf4_test_error_total
+    overall["4 Testing Error %"] = rf4_test_error_perc
+
+    overall["6 Training Error"] = rf6_train_error_total
+    overall["6 Training Error %"] = rf6_train_error_perc
+    overall["6 Testing Error"] = rf6_test_error_total
+    overall["6 Testing Error %"] = rf6_test_error_perc
+
     ### DONE! Dump to csv
     overall.to_csv(save + "forest/overall_performance.csv")
 
+    print("=== Finished random forest tests! ===")
     return 0
 
 ######

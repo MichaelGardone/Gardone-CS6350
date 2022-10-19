@@ -30,8 +30,8 @@ class AdaBoost:
         self.weights = examples["weight"].tolist()
 
         # Copy to record for graphs potentially
-        if self._debug:
-            self._prevD.append(copy.deepcopy(self.weights))
+        # if self._debug:
+        #     self._prevD.append(copy.deepcopy(self.weights))
 
         # Find a classifier h_t whose weighted classification error is better than chance
         # >>> Just get the label with the best gain
@@ -64,13 +64,20 @@ class AdaBoost:
     
     def _compute_error(self, y, x):
         # e = 1/2 - 1/2 (SUM(D_t(i) * yi * ht(xi))
-        wsum = 0
+        # wsum = 0
 
-        # (SUM(D_t(i) * yi * ht(xi))
+        # # (SUM(D_t(i) * yi * ht(xi))
+        # for i in range(self._sample_count):
+        #     wsum += self.weights[i] * y[i] * x[i]
+
+        # return 0.5 - 0.5 * wsum
+        error = 0
+
         for i in range(self._sample_count):
-            wsum += self.weights[i] * y[i] * x[i]
+            if y[i] != x[i]:
+                error += self.weights[i]
 
-        return 0.5 - 0.5 * wsum
+        return error
     
     def _update_weights(self, alpha, actual_labels, predictions):
         # print(self.weights)
@@ -86,7 +93,7 @@ class AdaBoost:
         # print(Z)
 
         for i in range(self._sample_count):
-            self.weights[i] /= Z
+            self.weights[i] = self.weights[i] / Z
 
         # Check to make sure SUM(D) = 1
         # print(self.weights)

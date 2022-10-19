@@ -90,9 +90,6 @@ def main():
 
     actual_labels = tr["y"].tolist()
 
-    overall = pandas.DataFrame(columns=["T", "Training Error", "Training Error %", "Testing Error", "Testing Error %"])
-    stump_results = pandas.DataFrame(columns=["T", "Training Error", "Training Error %", "Testing Error", "Testing Error %"])
-    
     # original
 
     # print("iter 1")
@@ -127,7 +124,21 @@ def main():
 
     # boost_model.print_hypotheses()
     
-    # for t = 1, 2, ..., T
+    steps = [i for i in range(T)]
+    train_error_overall = []
+    train_error_total = []
+    test_error_overall = []
+    test_error_total = []
+    train_error_stump = []
+    train_error_total_stump = []
+    test_error_stump = []
+    test_error_total_stump = []
+
+    # columns=["T", "Training Error", "Training Error %", "Testing Error", "Testing Error %"]
+    overall = pandas.DataFrame({"T":steps})
+    stump_results = pandas.DataFrame({"T":steps})
+
+    # for t = 0, 1, 2, ..., T-1
     for t in range(T):
         print("\t===")
         # Train
@@ -139,11 +150,17 @@ def main():
         for i in range(training_length):
             if tr["y"][i] != boost_model.classify(tr.iloc[i]):
                 otr_wrong += 1
-            if tr["y"][i] != boost_model.test_hypothesis_at(tr.iloc[i]):
+            if tr["y"][i] != boost_model.test_hypothesis_at(tr.iloc[i], t):
                 str_wrong += 1
 
         print("\t[", t, "] TRAINING: Overall Total Wrong:", (otr_wrong), "/", (training_length), "(", ((otr_wrong / training_length) * 100), "% )")
+        train_error_overall.append((otr_wrong / training_length) * 100)
+        train_error_total.append(otr_wrong)
+        
         print("\t[", t, "] TRAINING: Stump Total Wrong:", (str_wrong), "/", (training_length), "(", (str_wrong / training_length) * 100, "% )")
+        train_error_stump.append((str_wrong / training_length) * 100)
+        train_error_total_stump.append(str_wrong)
+
         # print("\tSum Check:", sum(boost_model._prevD[t]))
         # print("\tError: ", boost_model._errors[t])
 
@@ -151,29 +168,44 @@ def main():
         ote_wrong = 0 # overall
         ste_wrong = 0 # stump
         for i in range(testing_length):
-            if te["y"][i] != boost_model.classify(tr.iloc[i]):
+            if te["y"][i] != boost_model.classify(te.iloc[i]):
                 ote_wrong += 1
-            if te["y"][i] != boost_model.test_hypothesis_at(tr.iloc[i]):
+            if te["y"][i] != boost_model.test_hypothesis_at(te.iloc[i], t):
                 ste_wrong += 1
 
-        print("\t[", t, "] TESTING: Overall Total Wrong:", (ote_wrong), "/", (training_length), "(", ((ote_wrong / testing_length) * 100), "% )")
-        print("\t[", t, "] TESTING: Stump Total Wrong:", (ste_wrong), "/", (training_length), "(", (ste_wrong / testing_length) * 100, "% )")
+        print("\t[", t, "] TESTING: Overall Total Wrong:", (ote_wrong), "/", (testing_length), "(", ((ote_wrong / testing_length) * 100), "% )")
+        test_error_overall.append((ote_wrong / testing_length) * 100)
+        test_error_total.append(ote_wrong)
 
-        slice = [t, otr_wrong, (otr_wrong / training_length) * 100, ote_wrong, (ote_wrong / training_length) * 100]
-        res_df = pandas.DataFrame(data=[slice], columns=["T", "Training Error", "Training Error %", "Testing Error", "Testing Error %"])
-        overall = pandas.concat([overall, res_df])
-
-        slice = [t, str_wrong, (str_wrong / testing_length) * 100, ste_wrong, (ste_wrong / testing_length) * 100]
-        res_df = pandas.DataFrame(data=[slice], columns=["T", "Training Error", "Training Error %", "Testing Error", "Testing Error %"])
-        stump_results = pandas.concat([stump_results, res_df])
+        print("\t[", t, "] TESTING: Stump Total Wrong:", (ste_wrong), "/", (testing_length), "(", (ste_wrong / testing_length) * 100, "% )")
+        test_error_stump.append((ste_wrong / testing_length) * 100)
+        test_error_total_stump.append(ste_wrong)
         ####
-
-    print("=== Finished boost tests! ===")
+    
+    # columns=["T", "Training Error", "Training Error %", "Testing Error", "Testing Error %"]
+    # train_error_overall = []
+    # train_error_total = []
+    # test_error_overall = []
+    # test_error_total = []
+    overall["Training Error"] = train_error_total
+    overall["Training Error %"] = train_error_overall
+    overall["Testing Error"] = test_error_total
+    overall["Testing Error %"] = test_error_overall
+    
+    # train_error_stump = []
+    # train_error_total_stump = []
+    # test_error_stump = []
+    # test_error_total_stump = []
+    stump_results["Training Error"] = train_error_total_stump
+    stump_results["Training Error %"] = train_error_stump
+    stump_results["Testing Error"] = test_error_total_stump
+    stump_results["Testing Error %"] = test_error_stump
 
     ### DONE! Dump to csv
     overall.to_csv(save + "boost/overall_performance.csv")
     stump_results.to_csv(save + "boost/stump_performance.csv")
 
+    print("=== Finished boost tests! ===")
     return 0
 
 ######

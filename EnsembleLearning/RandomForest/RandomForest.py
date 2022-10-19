@@ -26,7 +26,7 @@ class RandomForest:
         '''
 
         # Get X number of rows, determined before entering tree creation
-        sub_samples = examples.sample(n=self._sample_count)
+        sub_samples = examples.sample(n=self._sample_count, replace=True)
         
         # Find a classifier h_t whose weighted classification error is better than chance
         # >>> Just get the label with the best gain
@@ -54,6 +54,9 @@ class RandomForest:
             vote += res
         
         return numpy.sign(vote)
+
+    def get_hypothesis(self, index):
+        return self._hypotheses[index]
     
     def print_hypotheses(self):
         for tree in self._hypotheses:

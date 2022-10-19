@@ -89,7 +89,14 @@ def main():
     # label, sample_count, gain=gain.EntropyGain()
     bagging_model = Bagging.Bagging("y", sample_count, debug=DEBUG)
 
-    overall = pandas.DataFrame(columns=["T", "Training Error", "Training Error %", "Testing Error", "Testing Error %"])
+    steps = [i for i in range(T)]
+    train_error_perc = []
+    train_error_total = []
+    test_error_perc = []
+    test_error_total = []
+
+    # columns=["T", "Training Error", "Training Error %", "Testing Error", "Testing Error %"]
+    overall = pandas.DataFrame({"T":steps})
 
     # print("iter 1")
     # bagging_model.single_bag(tr, FEATURES)
@@ -126,24 +133,28 @@ def main():
             if tr["y"][i] != bagging_model.classify(tr.iloc[i]):
                 tr_wrong += 1
         print("\t[", t, "] TRAINING: Total Wrong:", (tr_wrong), "/", (training_length), "(", (tr_wrong / training_length * 100), "% )")
-
+        train_error_perc.append((tr_wrong / training_length * 100))
+        train_error_total.append(tr_wrong)
+        
         # Evaluate on test
         te_wrong = 0
         for i in range(testing_length):
-            if te["y"][i] != bagging_model.classify(tr.iloc[i]):
+            if te["y"][i] != bagging_model.classify(te.iloc[i]):
                 te_wrong += 1
         print("\t[", t, "] TESTING: Total Wrong:", (te_wrong), "/", (testing_length), "(", (te_wrong / testing_length * 100), "% )")
-
-        slice = [t, tr_wrong, (tr_wrong / training_length) * 100, te_wrong, (te_wrong / testing_length) * 100]
-        res_df = pandas.DataFrame(data=[slice], columns=["T", "Training Error", "Training Error %", "Testing Error", "Testing Error %"])
-        overall = pandas.concat([overall, res_df])
+        test_error_perc.append(te_wrong / testing_length * 100)
+        test_error_total.append(te_wrong)
         ####
-
-    print("=== Finished bagging tests! ===")
+    
+    overall["Training Error"] = train_error_total
+    overall["Training Error %"] = train_error_perc
+    overall["Testing Error"] = test_error_total
+    overall["Testing Error %"] = test_error_perc
     
     ### DONE! Dump to csv
     overall.to_csv(save + "bagging/overall_performance.csv")
 
+    print("=== Finished bagging tests! ===")
     return 0
 
 ######
