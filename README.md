@@ -66,7 +66,7 @@ If you'd like to not flood your console with messages, also add the '> output.tx
 To run all without running each command individually, enter:
 
 ```
-./EnsembleLearning/run.sh
+bash ./EnsembleLearning/run.sh
 ```
 
 run.sh will attempt to make a conda environment and, if unavailable, will just download Pandas and Numpy. It will clean up after itself by either deleting the conda environment or removing the libraries if they were installed.
@@ -100,7 +100,7 @@ Console flooding doesn't happen with the linear regression output, so no piping 
 To run all without running each command individually, enter:
 
 ```
-./LinearRegression/run.sh
+bash ./LinearRegression/run.sh
 ```
 
 ***run.sh IN THIS FILE WILL RUN ONLY THE LINEAR REGRESSION COMPONENTS. FOLLOW ENSEMBLE LEARNING'S NOTES ON HOW TO RUN IT!***

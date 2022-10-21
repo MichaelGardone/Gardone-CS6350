@@ -32,5 +32,5 @@ Console flooding doesn't happen with the linear regression output, so no piping 
 To run all without running each command individually, enter:
 
 ```
-./run.sh
+bash ./run.sh
 ```

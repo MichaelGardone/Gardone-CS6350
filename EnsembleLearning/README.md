@@ -32,5 +32,5 @@ If you'd like to not flood your console with messages, also add the '> output.tx
 To run all without running each command individually, enter:
 
 ```
-./run.sh
+bash ./run.sh
 ```
