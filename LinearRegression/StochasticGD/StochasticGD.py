@@ -1,71 +1,66 @@
 import numpy
 
-class StochasticGD:
-    def __init__(self, threshold=1e-5, max_iterations=500, lr=1):
-        self._threshold = threshold
-        self._lr = lr
-        self._max_iterations = max_iterations
+def stch_gradient_descent(x, y, lr=1, threshold=1e-6, max_iterations=1000):
+    curr_lr = lr
+    avg_cost_history = []
+    weight = None
+    converge = False
+    final_costs = []
+    data_count = x.shape[0]
+    feature_count = x.shape[1]
+    iters = 0
+    prev_cost = 9999
 
-        self._weightHistory = {}
-        self._costHistory = {}
+    while converge == False:
+        w = numpy.zeros((1, x.shape[1]))
+        costs = []
 
-    def descent(self, x, dimX, y):
-        curr_lr = self._lr
-        answ = None
+        for it in range(max_iterations):
+            rand = numpy.random.randint(data_count)
+
+            # our universe for now
+            xi = x[rand]
+            yi = y[rand]
+
+            # gradient computation
+            xwt = xi * numpy.transpose(w)
+            error = yi - xwt
+
+            for j in range(feature_count):
+                w[0, j] = w[0, j] + curr_lr * error * xi[0, j]
+
+            cost = lms_cost(x, y, w)
+            costs.append(cost)
+
+            if numpy.abs(cost - prev_cost) <= threshold:
+                converge = True
+                weight = w
+                final_costs = costs
+                iters = it
+                break
+
+            prev_cost = cost
         
-        #while dfl > self._threshold and itera < self._max_iterations:
-        while answ == None:
-            # w should be of size |ex| because it has all of our features we care about
-            ws = numpy.zeros([self._max_iterations + 1, dimX])
-            ws = numpy.asmatrix(ws)
-            # curr_lr should be added, in the for loop we will get out answers
-            self._weightHistory[curr_lr] = ws
-            self._costHistory[curr_lr] = []
-
-            for i in range(self._max_iterations):
-                # Get out the current matrix
-                # At i = 0, that's just the zero vector
-                w = ws[i]
-
-                # compute lms cost, store for history
-                self._costHistory[curr_lr].append(self.cost_lms(x, y, w))
-
-                # compute gradient
-                # get the tranpose of the weight vector
-                wT = numpy.transpose(w)
-                # error = y - W^TX
-                error = y - x *  wT
-                # gradient = -SUM(error * xij)
-                gradient = -(numpy.transpose(x) * error)
-
-                # gradient update
-                # w = w - curr_lr * gradient (tranposed! -- don't forget that or numpy isn't happy...)
-                ws[i + 1] = w - curr_lr * numpy.transpose(gradient)
-
-                # Did we get a small enough difference that we can break out?
-                diff_from_last = numpy.linalg.norm(ws[i+1] - w)
-
-                # if threshold met, break because we found our w!
-                # also, make answ equal to something so we don't get locked in...
-                if diff_from_last < self._threshold:
-                    answ = (ws[i+1], curr_lr)
-                    break
-            
-            curr_lr *= 0.5
-            
-        return answ
-    
-    def cost_lms(self, data, label, weights):
-        sum_cost = 0
-        examples = int(data.size / 7)
+        avg_cost = 0
+        non_inf_values = []
+        hits_inf = False
+        for i in range(len(costs)):
+            if numpy.isfinite(costs[i]) == False:
+                hits_inf = True
+                break
+            non_inf_values.append(costs[i])
         
-        for exi in range(examples):
-            sum_cost += numpy.square(label[exi] - data[exi] * numpy.transpose(weights))
-        
-        return 0.5 * sum_cost
+        for v in non_inf_values:
+            avg_cost += v / len(non_inf_values)
 
-    def get_weight_history(self):
-        return self._weightHistory
-    
-    def get_cost_history(self):
-        return self._costHistory
+        avg_cost_history.append((curr_lr, avg_cost, -1 if hits_inf == False else i))
+        
+        curr_lr *= 0.5
+
+    return weight, avg_cost_history, final_costs, iters
+
+def lms_cost(x,y,w):
+    cost = 0.0
+    for i in range(len(x)):
+        cost += numpy.square(y[i] - x[i] * numpy.transpose(w))
+    return cost * 0.5

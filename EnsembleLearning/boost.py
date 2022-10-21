@@ -90,40 +90,6 @@ def main():
 
     actual_labels = tr["y"].tolist()
 
-    # original
-
-    # print("iter 1")
-    # boost_model.single_boost(tr, FEATURES, actual_labels)
-
-    # wrong = 0
-    # for i in range(training_length):
-    #     if tr["y"][i] != boost_model.classify(tr.iloc[i]):
-    #         wrong += 1
-    # print("Total Wrong:", (wrong), "/", (training_length), "(", (wrong / training_length * 100), "% )")
-    # print("Sum Check:", sum(boost_model._prevD[0]))
-    # print("Error: ", boost_model._errors[0])
-
-    # # after iteration 1
-
-    # boost_model.print_hypotheses()
-
-    # print()
-
-    # print("iter 2")
-    # boost_model.single_boost(tr, FEATURES, actual_labels)
-    # wrong = 0
-    # for i in range(training_length):
-    #     if tr["y"][i] != boost_model.classify(tr.iloc[i]):
-    #         wrong += 1
-    # print("Total Wrong:", (wrong), "/", (training_length), "(", (wrong / training_length * 100), "% )")
-    # print("Sum Check:", sum(boost_model._prevD[1]))
-    # print("Error: ", boost_model._errors[1])
-    
-    # # after iteration 2
-    # print(tr)
-
-    # boost_model.print_hypotheses()
-    
     steps = [i for i in range(T)]
     train_error_overall = []
     train_error_total = []
@@ -202,8 +168,9 @@ def main():
     stump_results["Testing Error %"] = test_error_stump
 
     ### DONE! Dump to csv
-    overall.to_csv(save + "boost/overall_performance.csv")
-    stump_results.to_csv(save + "boost/stump_performance.csv")
+    # uncomment to output training errors into CSV, but console should be fine for turn-in
+    # overall.to_csv(save + "boost/overall_performance.csv")
+    # stump_results.to_csv(save + "boost/stump_performance.csv")
 
     print("=== Finished boost tests! ===")
     return 0

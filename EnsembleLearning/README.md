@@ -34,5 +34,3 @@ To run all without running each command individually, enter:
 ```
 ./run.sh
 ```
-
-run.sh will attempt to make a conda environment and, if unavailable, will just download Pandas and Numpy. It will clean up after itself by either deleting the conda environment or removing the libraries if they were installed.

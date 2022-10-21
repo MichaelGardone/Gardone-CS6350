@@ -6,7 +6,7 @@ import os
 import pandas, numpy
 
 # my code
-from BatchGD.BatchGD import gradient_descent, lms_cost
+from StochasticGD.StochasticGD import stch_gradient_descent, lms_cost
 
 save = "output/results/" if os.path.isfile("../data/concrete/test.csv") else "LinearRegression/output/results/"
 
@@ -50,18 +50,17 @@ def parse_test():
     return numpy.asmatrix(te_x), numpy.asmatrix(te_y)
 
 def main():
-    print("=== Begin batch gradient descent tests! ===")
+    print("=== Begin stochastic gradient descent tests! ===")
 
     tr_x, tr_y = parse_train()
-
     te_x, te_y = parse_test()
-
-    # returns weight, cost_history (learn rate, avg cost, -1 if reached infinite, i otherwise)
-    weights, cost_history, final_cost, iters = gradient_descent(tr_x, tr_y, max_iterations=10000)
+    
+    # answer = batch.descent_until_converge(tr_x, tr_y) # returns (weights, iteration it finished on)
+    weights, cost_history, final_costs, iters = stch_gradient_descent(tr_x, tr_y, lr=1, max_iterations=10000)
     print("w found:\n", weights)
     print("learning rate:", cost_history[-1][0])
     print("Cost of Test:", lms_cost(te_x, te_y, weights))
-
+    
     print("Cost History:")
     print("Learn Rate | Avg. Cost (if it hit infinity)")
     lrs = []
@@ -81,12 +80,12 @@ def main():
     iterations = [i for i in range(iters + 1)]
     output = pandas.DataFrame({"Learning Rates":lrs, "Avg Costs":costs})
 
-    output2 = pandas.DataFrame({"Iterations":iterations, "Cost":final_cost})
+    output2 = pandas.DataFrame({"Iterations":iterations, "Cost":final_costs})
 
-    output.to_csv(save + "batch/avg_costs.csv")
-    output2.to_csv(save + "batch/final_iter.csv")
+    output.to_csv(save + "stoch/avg_costs.csv")
+    output2.to_csv(save + "stoch/final_iter.csv")
 
-    print("=== Finished batch gradient descent tests! ===")
+    print("=== Finished stochastic gradient descent tests! ===")
 
 
 ######

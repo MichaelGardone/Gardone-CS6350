@@ -118,50 +118,6 @@ def main():
     rf2_model = RandomForest.RandomForest("y", sample_count, 2, debug=DEBUG)
     rf4_model = RandomForest.RandomForest("y", sample_count, 4, debug=DEBUG)
     rf6_model = RandomForest.RandomForest("y", sample_count, 6, debug=DEBUG)
-
-    # print("iter 1")
-    # rf2_model.single_tree(tr, FEATURES)
-    # rf4_model.single_tree(tr, FEATURES)
-    # rf6_model.single_tree(tr, FEATURES)
-
-    # wrong_2 = 0
-    # wrong_4 = 0
-    # wrong_6 = 0
-    # for i in range(training_length):
-    #     if tr["y"][i] != rf2_model.classify(tr.iloc[i]):
-    #         wrong_2 += 1
-    #     if tr["y"][i] != rf4_model.classify(tr.iloc[i]):
-    #         wrong_4 += 1
-    #     if tr["y"][i] != rf6_model.classify(tr.iloc[i]):
-    #         wrong_6 += 1
-    # print("2- Total Wrong:", (wrong_2), "/", (training_length), "(", (wrong_2 / training_length * 100), "% )")
-    # print("4- Total Wrong:", (wrong_4), "/", (training_length), "(", (wrong_4 / training_length * 100), "% )")
-    # print("6- Total Wrong:", (wrong_6), "/", (training_length), "(", (wrong_6 / training_length * 100), "% )")
-
-    # # rf_model.print_hypotheses()
-
-    # print()
-
-    # print("iter 2")
-    # rf2_model.single_tree(tr, FEATURES)
-    # rf4_model.single_tree(tr, FEATURES)
-    # rf6_model.single_tree(tr, FEATURES)
-
-    # wrong_2 = 0
-    # wrong_4 = 0
-    # wrong_6 = 0
-    # for i in range(training_length):
-    #     if tr["y"][i] != rf2_model.classify(tr.iloc[i]):
-    #         wrong_2 += 1
-    #     if tr["y"][i] != rf4_model.classify(tr.iloc[i]):
-    #         wrong_4 += 1
-    #     if tr["y"][i] != rf6_model.classify(tr.iloc[i]):
-    #         wrong_6 += 1
-    # print("2- Total Wrong:", (wrong_2), "/", (training_length), "(", (wrong_2 / training_length * 100), "% )")
-    # print("4- Total Wrong:", (wrong_4), "/", (training_length), "(", (wrong_4 / training_length * 100), "% )")
-    # print("6- Total Wrong:", (wrong_6), "/", (training_length), "(", (wrong_6 / training_length * 100), "% )")
-
-    # rf_model.print_hypotheses()
     
     # for t = 1, 2, ..., T
     for t in range(T):
@@ -234,7 +190,7 @@ def main():
     overall["6 Testing Error %"] = rf6_test_error_perc
 
     ### DONE! Dump to csv
-    overall.to_csv(save + "forest/overall_performance.csv")
+    # overall.to_csv(save + "forest/overall_performance.csv") # uncomment to output training errors into CSV, but console should be fine for turn-in
 
     print("=== Finished random forest tests! ===")
     return 0

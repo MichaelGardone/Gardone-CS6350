@@ -1,0 +1,31 @@
+=== Begin stochastic gradient descent tests! ===
+w found:
+ [[-0.03846427 -0.05553646 -0.17257929  0.50123907  0.03962146  0.30652336
+  -0.00521005]]
+learning rate: 0.0078125
+Cost of Test: [[25.74240943]]
+=== Finished stochastic gradient descent tests! ===
+
+=== Begin stochastic gradient descent tests! ===
+w found:
+ [[ 0.11020965 -0.08192573 -0.07789376  0.63919072  0.02683723  0.48492199
+   0.16122585]]
+learning rate: 0.01
+Cost of Test: [[23.17683069]]
+=== Finished stochastic gradient descent tests! ===
+
+=== Begin stochastic gradient descent tests! ===
+w found:
+ [[-0.05664959 -0.19406225 -0.17097448  0.43236138 -0.01983565  0.14202605
+  -0.04020113]]
+learning rate: 0.001
+Cost of Test: [[21.9233832]]
+=== Finished stochastic gradient descent tests! ===
+
+=== Begin stochastic gradient descent tests! ===
+w found:
+ [[ 0.02018627 -0.03425168 -0.04117461  0.08917096 -0.01358123 -0.00591598
+   0.0036966 ]]
+learning rate: 0.0001
+Cost of Test: [[25.78753421]]
+=== Finished stochastic gradient descent tests! ===

@@ -97,29 +97,6 @@ def main():
 
     # columns=["T", "Training Error", "Training Error %", "Testing Error", "Testing Error %"]
     overall = pandas.DataFrame({"T":steps})
-
-    # print("iter 1")
-    # bagging_model.single_bag(tr, FEATURES)
-
-    # wrong = 0
-    # for i in range(training_length):
-    #     if tr["y"][i] != bagging_model.classify(tr.iloc[i]):
-    #         wrong += 1
-    # print("Total Wrong:", (wrong), "/", (training_length), "(", (wrong / training_length * 100), "% )")
-
-    # bagging_model.print_hypotheses()
-
-    # print()
-
-    # print("iter 2")
-    # bagging_model.single_bag(tr, FEATURES)
-    # wrong = 0
-    # for i in range(training_length):
-    #     if tr["y"][i] != bagging_model.classify(tr.iloc[i]):
-    #         wrong += 1
-    # print("Total Wrong:", (wrong), "/", (training_length), "(", (wrong / training_length * 100), "% )")
-
-    # bagging_model.print_hypotheses()
     
     # for t = 1, 2, ..., T
     for t in range(T):
@@ -152,7 +129,7 @@ def main():
     overall["Testing Error %"] = test_error_perc
     
     ### DONE! Dump to csv
-    overall.to_csv(save + "bagging/overall_performance.csv")
+    # overall.to_csv(save + "bagging/overall_performance.csv") # uncomment to output training errors into CSV, but console should be fine for turn-in
 
     print("=== Finished bagging tests! ===")
     return 0

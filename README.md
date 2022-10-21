@@ -73,6 +73,34 @@ run.sh will attempt to make a conda environment and, if unavailable, will just d
 
 ### [LinearRegression](https://github.com/MichaelGardone/Gardone-CS6350/tree/main/LinearRegression)
 
+## How to Run
+
+To run Batch GD:
+
+```
+python3 LinearRegression/batch.py
+```
+
+To run LinearRegression/Stochastic GD:
+
+```
+python3 LinearRegression/stochastic.py
+```
+
+To run the analytical equation:
+
+```
+python3 LinearRegression/analytical.py
+```
+
+Console flooding doesn't happen with the linear regression output, so no piping is needed.
+
+To run all without running each command individually, enter:
+
+```
+./LinearRegression/run.sh
+```
+
 ***run.sh IN THIS FILE WILL RUN ONLY THE LINEAR REGRESSION COMPONENTS. FOLLOW ENSEMBLE LEARNING'S NOTES ON HOW TO RUN IT!***
 
 ## ???? - Homework 3
