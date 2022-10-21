@@ -1,6 +1,8 @@
 # Gardone-CS6350
 Repository for CS 6350 @ the University of Utah for Fall 2022. The code presented here was written by Michael Gardone (u1000771) in the graduate section of the Machine Learning course. All READMEs are compiled into this master one, but for more specific/less cluttered please visit each folder.
 
+***For all projects, please be sure to at least be in the main project directory (e.g. C:/Gardone-CS6350 or /usr/Desktop/Gardone-CS6350). run.sh will not function if you aren't in there at least.***
+
 ## DecisionTrees - Homework 1
 
 [Subfolder](https://github.com/MichaelGardone/Gardone-CS6350/tree/main/DecisionTrees)
