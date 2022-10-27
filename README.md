@@ -105,9 +105,41 @@ bash ./LinearRegression/run.sh
 
 ***run.sh IN THIS FILE WILL RUN ONLY THE LINEAR REGRESSION COMPONENTS. FOLLOW ENSEMBLE LEARNING'S NOTES ON HOW TO RUN IT!***
 
-## ???? - Homework 3
+## Perceptron - Homework 3
 
 [Subfolder]()
+
+## How to Run
+
+To run Standard Perceptron:
+
+```
+python3 Perceptron/spercep.py
+```
+
+To run Voted Perceptron (produces a lot of output):
+
+```
+python3 Perceptron/vpercep.py > Perceptron/output/vp_performance.txt
+```
+
+To run the Averaged Perceptron:
+
+```
+python3 Perceptron/apercep.py
+```
+
+To run all without running each command individually, enter:
+
+```
+bash Perceptron/run.sh
+```
+
+The bash script does not run perceptron.py, to do that please copy/paste the following:
+
+```
+python3 Perceptron/perceptron.py
+```
 
 ## ???? - Homework 4
 
