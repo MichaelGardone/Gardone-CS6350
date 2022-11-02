@@ -29,12 +29,13 @@ def parse_train():
     row_count = training.values.shape[0]
     col_count = training.values.shape[1]
     
-    tr_x = numpy.empty((row_count, col_count - 1))
+    tr_x = numpy.empty((row_count, col_count))
     tr_y = numpy.empty((row_count, 1))
 
     for i in range(row_count):
         dp = training.iloc[i].tolist()
-        tr_x[i] = numpy.array(dp[0:col_count-1])
+        tr_x[i] = numpy.array(dp[0:col_count])
+        tr_x[i,col_count-1] = 1
         tr_y[i] = dp[col_count-1]
 
     return tr_x, tr_y
@@ -47,13 +48,14 @@ def parse_test():
     row_count = testing.values.shape[0]
     col_count = testing.values.shape[1]
     
-    te_x = numpy.empty((row_count, col_count - 1))
+    te_x = numpy.empty((row_count, col_count))
     te_y = numpy.empty((row_count, 1))
 
     # magic to turn it into a nice math-ready form...
     for i in range(row_count):
         dp = testing.iloc[i].tolist()
-        te_x[i] = numpy.array(dp[0:col_count-1])
+        te_x[i] = numpy.array(dp[0:col_count])
+        te_x[i,col_count-1] = 1
         te_y[i] = dp[col_count-1]
     
     return te_x, te_y
