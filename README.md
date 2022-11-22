@@ -141,10 +141,30 @@ The bash script does not run perceptron.py, to do that please copy/paste the fol
 python3 Perceptron/perceptron.py
 ```
 
-## ???? - Homework 4
+## SVM - Homework 4
 
 [Subfolder]()
 
-## ???? - Homework 5
+To run SVM (produces a lot of output):
+
+```
+python3 SVM/svm.py > SVM/output/output.txt
+```
+
+To run the Q5:
+
+```
+python3 SVM/q5.py
+```
+
+To run all without running each command individually (excludes Q5), enter:
+
+```
+bash SVM/run.sh
+```
+
+## How to Run
+
+## Neural Networks & Linear Regression (again) - Homework 5
 
 [Subfolder]()
