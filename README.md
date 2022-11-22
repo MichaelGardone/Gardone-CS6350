@@ -143,7 +143,7 @@ python3 Perceptron/perceptron.py
 
 ## SVM - Homework 4
 
-[Subfolder]()
+[Subfolder](https://github.com/MichaelGardone/Gardone-CS6350/tree/main/SVM)
 
 To run SVM (produces a lot of output):
 
