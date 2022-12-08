@@ -3,7 +3,7 @@
 if [[ -d "NeuralNetwork" ]]
 then
     printf "*********************** Starting custom implementation! ***********************"
-    python3 NeuralNetwork/nn.p
+    python3 NeuralNetwork/nn.py
     printf "*********************** Finished custom implementation! ***********************"
     printf "*********************** Starting PyTorch implementation! ***********************"
     python3 NeuralNetwork/pytorch_nn.py
