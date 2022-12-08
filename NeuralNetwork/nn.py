@@ -187,9 +187,9 @@ def main():
     gaussian(tr_x, tr_y, te_x, te_y)
     print("========== RAND INIT CHECK ==========")
 
-    # print("========== ZERO INIT CHECK ==========")
+    print("========== ZERO INIT CHECK ==========")
     zero(tr_x, tr_y, te_x, te_y)
-    # print("========== ZERO INIT CHECK ==========")
+    print("========== ZERO INIT CHECK ==========")
 
     return 0
 ##
