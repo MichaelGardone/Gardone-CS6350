@@ -13,13 +13,13 @@ BATCH_SIZE = 10
 bankn_train = "../data/bank-note/train.csv" if os.path.isfile("../data/bank-note/train.csv") else "data/bank-note/train.csv"
 bankn_test = "../data/bank-note/test.csv" if os.path.isfile("../data/bank-note/test.csv") else "data/bank-note/test.csv"
 
-def init_xavier(m):
+def xavier(m):
     if isinstance(m, torch.nn.Linear):
         torch.nn.init.xavier_normal_(m.weight)
         m.bias.data.fill_(0.01)
 ##
 
-def init_he(m):
+def he(m):
     if isinstance(m, torch.nn.Linear):
         torch.nn.init.kaiming_normal_(m.weight)
         m.bias.data.fill_(0.01)
@@ -32,11 +32,11 @@ class NeuralNetworkPT(torch.nn.Module):
         if mode == 0:
             # tanh / He
             self.activation = torch.nn.Tanh()
-            self.trainingMethod = init_he
+            self.trainingMethod = he
         elif mode == 1:
             # ReLU / Xavier
             self.activation = torch.nn.ReLU()
-            self.trainingMethod = init_xavier
+            self.trainingMethod = xavier
         else:
             raise Exception("Nope!")
 
