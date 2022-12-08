@@ -168,7 +168,7 @@ bash SVM/run.sh
 
 ## Neural Networks & Logistic Regression - Homework 5
 
-[Neural Networks]()
+[Neural Networks](https://github.com/MichaelGardone/Gardone-CS6350/tree/main/NeuralNetwork)
 
 ## How to Run
 
@@ -190,7 +190,7 @@ To run all without running each command individually, enter:
 bash NeuralNetwork/run.sh
 ```
 
-[LogisticRegression]()
+[LogisticRegression](https://github.com/MichaelGardone/Gardone-CS6350/tree/main/LogisticRegression)
 
 ## How to Run
 
