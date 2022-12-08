@@ -40,6 +40,7 @@ cd DecisionTrees/src
 
 - Pandas
 - Numpy
+- PyTorch (HW 5 Extra Credit)
 
 ## How to Run
 
@@ -165,6 +166,42 @@ bash SVM/run.sh
 
 ## How to Run
 
-## Neural Networks & Linear Regression (again) - Homework 5
+## Neural Networks & Logistic Regression - Homework 5
 
-[Subfolder]()
+[Neural Networks]()
+
+## How to Run
+
+To run SVM (produces a lot of output):
+
+```
+python3 NeuralNetwork/nn.py
+```
+
+To run the Extra Credit PyTorch Implementation:
+
+```
+python3 NeuralNetwork/pytorch_nn.py
+```
+
+To run all without running each command individually, enter:
+
+```
+bash NeuralNetwork/run.sh
+```
+
+[LogisticRegression]()
+
+## How to Run
+
+To run Neural Network tests:
+
+```
+python3 LogisticRegression/logreg.py
+```
+
+To run all without running each command individually, enter:
+
+```
+bash LogisticRegression/run.sh
+```
